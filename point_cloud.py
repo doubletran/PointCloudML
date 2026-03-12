@@ -3,10 +3,7 @@ import pandas as pd
 import numpy as np
 from jakteristics import compute_features
 # load the classification function
-from sklearn.naive_bayes import GaussianNB
-from sklearn.feature_selection import SequentialFeatureSelector
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+
 # for n__radius in [0.5, 1, 1.2, 3]
 n_radius = 1
 
