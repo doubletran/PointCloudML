@@ -21,7 +21,7 @@ X_train = train_dataset.drop(columns=["label"]).values
 y_train = train_dataset["label"].values
 feature_names = train_dataset.drop(columns=["label"]).columns.tolist()
 
-test_dataset = pd.read_csv("test_data.csv")
+test_dataset = pd.read_csv("test_data_with_predictions.csv")
 X_test = test_dataset.drop(columns=["label"]).values
 y_test = test_dataset["label"].values
 
@@ -61,7 +61,7 @@ def evaluate_model(name, strategy, pipe, Xtr, ytr, Xte, yte):
     return row, y_pred, pipe
 classifiers = {
     "GaussianNB": GaussianNB(),
-   # "SVM_rbf": SVC(kernel="poly", C=1, gamma="scale"),          # arbitrary kernel (rbf)
+    "SVM": SVC(kernel="rbf", C=1, gamma="scale"),          # arbitrary kernel (rbf)
     "RandomForest": RandomForestClassifier(
         n_estimators=300, max_depth=None, random_state=42, n_jobs=-1
     ),
@@ -158,13 +158,16 @@ joblib.dump(model, 'model/RandomForestSFS.pkl')
 _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, "RandomForest")
 """
 for classifier in classifiers.keys():
+    if classifier != "SVM":
+       continue
+
     row, y_pred, model = feature_model(X_train, y_train, X_test, y_test, selected_feature_idx, classifier)
     results.append(row)
     joblib.dump(model, f'model/{classifier}_SFS.pkl')
-    _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, classifier)
-    joblib.dump(model_pca, f'model/{classifier}_PCA.pkl')
+   # _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, classifier)
+    #joblib.dump(model_pca, f'model/{classifier}_PCA.pkl')
     test_dataset[f'{classifier}_SFS_Pred'] = y_pred
-    test_dataset[f'{classifier}_PCA_Pred'] = y_pred_pca
+   # test_dataset[f'{classifier}_PCA_Pred'] = y_pred_pca
 test_dataset.to_csv("test_data_with_predictions.csv", index=False)
 """
 
