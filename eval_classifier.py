@@ -61,7 +61,7 @@ def evaluate_model(name, strategy, pipe, Xtr, ytr, Xte, yte):
     return row, y_pred, pipe
 classifiers = {
     "GaussianNB": GaussianNB(),
-    "SVM_rbf": SVC(kernel="poly", C=1, gamma="scale"),          # arbitrary kernel (rbf)
+   # "SVM_rbf": SVC(kernel="poly", C=1, gamma="scale"),          # arbitrary kernel (rbf)
     "RandomForest": RandomForestClassifier(
         n_estimators=300, max_depth=None, random_state=42, n_jobs=-1
     ),
@@ -151,13 +151,23 @@ selected_feature_idx = [feature_names.index(f) for f in selected_features]
 
 from joblib import Parallel, delayed
 import joblib
-
+"""
 row, y_pred, model = feature_model(X_train, y_train, X_test, y_test, selected_feature_idx, "RandomForest")
 # Save the model as a pickle in a file
 joblib.dump(model, 'model/RandomForestSFS.pkl')
-
-"""
 _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, "RandomForest")
+"""
+for classifier in classifiers.keys():
+    row, y_pred, model = feature_model(X_train, y_train, X_test, y_test, selected_feature_idx, classifier)
+    results.append(row)
+    joblib.dump(model, f'model/{classifier}_SFS.pkl')
+    _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, classifier)
+    joblib.dump(model_pca, f'model/{classifier}_PCA.pkl')
+    test_dataset['{classifier}_SFS_Pred'] = y_pred
+    test_dataset['{classifier}_PCA_Pred'] = y_pred_pca
+test_dataset.to_csv("test_data_with_predictions.csv", index=False)
+"""
+
 
 #Workflow to classify tree with Random Forest
 tree_pred = model.predict(X_tree[:, selected_feature_idx])
