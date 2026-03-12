@@ -163,8 +163,8 @@ for classifier in classifiers.keys():
     joblib.dump(model, f'model/{classifier}_SFS.pkl')
     _, y_pred_pca, model_pca= pca(X_train, y_train, X_test, y_test, classifier)
     joblib.dump(model_pca, f'model/{classifier}_PCA.pkl')
-    test_dataset['{classifier}_SFS_Pred'] = y_pred
-    test_dataset['{classifier}_PCA_Pred'] = y_pred_pca
+    test_dataset[f'{classifier}_SFS_Pred'] = y_pred
+    test_dataset[f'{classifier}_PCA_Pred'] = y_pred_pca
 test_dataset.to_csv("test_data_with_predictions.csv", index=False)
 """
 
